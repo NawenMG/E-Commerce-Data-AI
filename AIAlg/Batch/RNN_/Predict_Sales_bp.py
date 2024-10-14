@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 # Blueprint per RNN e LSTM
-rnn_bp = Blueprint('rnn', __name__)
+predicate_Sales_RNNLSTM_bp = Blueprint('rnn', __name__)
 
 def create_rnn_model(input_shape):
     """
@@ -18,7 +18,7 @@ def create_rnn_model(input_shape):
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
     return model
 
-@rnn_bp.route('/predict_sales', methods=['POST'])
+@predicate_Sales_RNNLSTM_bp.route('/predict_sales', methods=['POST'])
 def predict_sales():
     """
     Route per la previsione delle vendite utilizzando un modello RNN.

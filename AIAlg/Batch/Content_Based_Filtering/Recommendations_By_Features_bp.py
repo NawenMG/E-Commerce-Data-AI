@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Blueprint per il Content-Based Filtering
-content_based_filtering_bp = Blueprint('content_based_filtering', __name__)
+recommendations_by_features_bp = Blueprint('content_based_filtering', __name__)
 
 # Simuliamo un dataset di prodotti
 # Questo dovrebbe essere caricato da un database o da un file in un'applicazione reale
@@ -37,7 +37,7 @@ def fit_tfidf():
 
 similarity_matrix = fit_tfidf()
 
-@content_based_filtering_bp.route('/recommendations_by_features', methods=['POST'])
+@recommendations_by_features_bp.route('/recommendations_by_features', methods=['POST'])
 def get_recommendations_by_features():
     """
     Route per ottenere raccomandazioni basate sulle caratteristiche dei prodotti.

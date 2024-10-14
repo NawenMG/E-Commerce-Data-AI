@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 # Blueprint per RNN e LSTM
-lstm_bp = Blueprint('lstm', __name__)
+analyze_customer_behavior_bp = Blueprint('lstm', __name__)
 
 def create_lstm_model(input_shape):
     """
@@ -19,7 +19,7 @@ def create_lstm_model(input_shape):
     return model
 
 
-@lstm_bp.route('/analyze_customer_behavior', methods=['POST'])
+@analyze_customer_behavior_bp.route('/analyze_customer_behavior', methods=['POST'])
 def analyze_customer_behavior():
     """
     Route per l'analisi del comportamento sequenziale dei clienti utilizzando un modello LSTM.

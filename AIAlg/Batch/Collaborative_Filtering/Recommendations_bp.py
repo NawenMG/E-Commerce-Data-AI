@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 # Blueprint per il Collaborative Filtering
-collaborative_filtering_bp = Blueprint('collaborative_filtering', __name__)
+recommendations_bp = Blueprint('collaborative_filtering', __name__)
 
 class CollaborativeFilteringModel(tf.keras.Model):
     def __init__(self, num_users, num_items, embedding_size=50):
@@ -21,7 +21,7 @@ class CollaborativeFilteringModel(tf.keras.Model):
         dot_product = tf.reduce_sum(user_vector * item_vector, axis=1)
         return dot_product
 
-@collaborative_filtering_bp.route('/recommendations', methods=['POST'])
+@recommendations_bp.route('/recommendations', methods=['POST'])
 def get_recommendations():
     """
     Route per ottenere raccomandazioni basate sul comportamento passato degli utenti.

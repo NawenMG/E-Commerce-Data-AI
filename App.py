@@ -1,69 +1,119 @@
 from flask import Flask
 from CleanData import Clean_bp
-from AIAlg.Batch.Fully_Connected_Neural_Networks import Customer_Classification_F_bp, Market_Segmentation_F_bp, Sales_Prediction_bp
-from AIAlg.Batch.CNN_ import Image_Analysis_bp, Feature_Extraction_bp
-from AIAlg.Batch.RNN_ import Predict_Sales_bp
-from AIAlg.Batch.LSTM_ import Analyze_Customer_Behavior_bp
-from AIAlg.Batch.Collaborative_Filtering import Recommendations_bp, Suggest_products_bp
-from AIAlg.Batch.Content_Based_Filtering import Recommendations_By_Features_bp, Recommendations_By_User_History_bp
-from AIAlg.Batch.Autoencoder import Autoencoder_Anomaly_bp
-from CleanData.Batch import Autoencoder_Reduction_bp
-from AIAlg.Batch.Decision_Tree import Customer_Classification_D_bp, Market_Segmentation_D_bp, Rule_Based_Decision_bp
-from AIAlg.Batch.Random_Forest import Customer_Behavior_bp, Customer_Classification_R_bp, Sales_Estimation_bp
-from AIAlg.Batch.Gradient_Boosting_Machines import Classification_bp, Prediction_Improvement_bp, Regression_bp
-from AIAlg.Batch.Support_Vector_Machines import Svm_Classification_bp, Svm_Fraud_Detection
-from AIAlg.Batch.ARIMA import Arima_Sales_Forecast_bp, Arima_Seasonal_Analysis_bp
-from AIAlg.Batch.Prophet_Facebook import Prophet_Forecast_bp
+from AIAlg.Batch.Fully_Connected_Neural_Networks.Customer_Classification_F_bp import customer_classification_bp
+from AIAlg.Batch.Fully_Connected_Neural_Networks.Market_Segmentation_F_bp import market_segmentation_bp
+from AIAlg.Batch.Fully_Connected_Neural_Networks.Sales_Prediction_bp import sales_prediction_bp
+from AIAlg.Batch.CNN_ import Feature_Extraction_bp
+from AIAlg.Batch.CNN_ import Image_Analysis_bp
+from AIAlg.Batch.RNN_.Predict_Sales_bp import predicate_Sales_RNNLSTM_bp
+from AIAlg.Batch.LSTM_.Analyze_Customer_Behavior_bp import analyze_customer_behavior_bp
+from AIAlg.Batch.Collaborative_Filtering.Recommendations_bp import recommendations_bp
+from AIAlg.Batch.Collaborative_Filtering.Suggest_products_bp import suggest_products_bp
+from AIAlg.Batch.Content_Based_Filtering.Recommendations_By_Features_bp import recommendations_by_features_bp
+from AIAlg.Batch.Content_Based_Filtering.Recommendations_By_User_History_bp import recommendations_by_user_history_bp
+from AIAlg.Batch.Autoencoder.Autoencoder_Anomaly_bp import autoencoder_anomaly_bp
+from CleanData.Batch.Autoencoder_Reduction_bp import autoencoder_reduction_bp
+from AIAlg.Batch.Decision_Tree.Customer_Classification_D_bp import decision_tree_customer_classification_bp
+from AIAlg.Batch.Decision_Tree.Market_Segmentation_D_bp import decision_tree_market_segmentation_bp
+from AIAlg.Batch.Decision_Tree.Rule_Based_Decision_bp import decision_tree_rule_based_decision_bp
+from AIAlg.Batch.Random_Forest.Customer_Behavior_bp import random_forest_customer_behavior_bp
+from AIAlg.Batch.Random_Forest.Customer_Classification_R_bp import random_forest_customer_classification_bp
+from AIAlg.Batch.Random_Forest.Sales_Estimation_bp import random_forest_sales_estimation_bp
+from AIAlg.Batch.Gradient_Boosting_Machines.Classification_bp import gradient_boosting_classification_bp
+from AIAlg.Batch.Gradient_Boosting_Machines.Prediction_Improvement_bp import gradient_boosting_prediction_improvement_bp
+from AIAlg.Batch.Gradient_Boosting_Machines.Regression_bp import gradient_boosting_regression_bp
+from AIAlg.Batch.Support_Vector_Machines.Svm_Classification_bp import svm_classification_bp
+from AIAlg.Batch.Support_Vector_Machines.Svm_Fraud_Detection_bp import svm_fraud_detection_bp
+from AIAlg.Batch.ARIMA.Arima_Sales_Forecast_bp import arima_sales_forecast_bp
+from AIAlg.Batch.ARIMA.Arima_Seasonal_Analysis_bp import arima_seasonal_analysis_bp
+from AIAlg.Batch.Prophet_Facebook.Prophet_Forecast_bp import prophet_forecast_bp
+from AIAlg.Streaming.LSTMRNN.lstm_sales_prediction import lstm_sales_bp;
+from AIAlg.Streaming.LSTMRNN.Gru_anomaly import gru_anomaly_bp
+from AIAlg.Streaming.CNN_1D.cnn_ClickStream import cnn_clickstream_bp
+from AIAlg.Streaming.Transformers.transformer_recommendation import transformer_recommendation_bp
+from AIAlg.Streaming.Modelli_Anomaly_Detection.autoencoder_fraud_detection import autoencoder_fraud_bp
+from AIAlg.Streaming.Modelli_Anomaly_Detection.lstm_anomaly_detection import lstm_anomaly_bp
+from AIAlg.Streaming.RL.reinforcement_learning_recommendation import rl_recommendation_bp
+from AIAlg.Streaming.Online_Learning.online_learning import online_learning_bp
+from AIAlg.Streaming.TFX.sales_forecasting import forecasting_bp
+
 
 app = Flask(__name__)
-
 
 #PULIZIA DATI
 app.register_blueprint(Clean_bp)  # Pulizia dati grezzi con pyspark
 #Batch
 #Autoencoder
-app.register_blueprint(Autoencoder_Reduction_bp)
+app.register_blueprint(autoencoder_reduction_bp)
+
 
 #BATCH
 #Fully Connected Neural Networks
-app.register_blueprint(Sales_Prediction_bp)
-app.register_blueprint(Customer_Classification_F_bp)
-app.register_blueprint(Market_Segmentation_F_bp)
+app.register_blueprint(sales_prediction_bp)
+app.register_blueprint(customer_classification_bp)
+app.register_blueprint(market_segmentation_bp)
 #CNN
 app.register_blueprint(Image_Analysis_bp)
 app.register_blueprint(Feature_Extraction_bp)
-#RNN
-app.register_blueprint(Predict_Sales_bp)
+#RNNLSTM
+app.register_blueprint(predicate_Sales_RNNLSTM_bp)
 #LSTM
-app.register_blueprint(Analyze_Customer_Behavior_bp)
+app.register_blueprint(analyze_customer_behavior_bp)
 #Collaborative Filtering (Filtraggio Collaborativo)
-app.register_blueprint(Recommendations_bp)
-app.register_blueprint(Suggest_products_bp)
+app.register_blueprint(recommendations_bp)
+app.register_blueprint(suggest_products_bp)
 #Content-Based Filtering (Filtraggio Basato sul Contenuto)
-app.register_blueprint(Recommendations_By_Features_bp)
-app.register_blueprint(Recommendations_By_User_History_bp)
+app.register_blueprint(recommendations_by_features_bp)
+app.register_blueprint(recommendations_by_user_history_bp)
 #Autoencoder
-app.register_blueprint(Autoencoder_Anomaly_bp)
+app.register_blueprint(autoencoder_anomaly_bp)
 #Decision Tree
-app.register_blueprint(Customer_Classification_D_bp)
-app.register_blueprint(Market_Segmentation_D_bp)
-app.register_blueprint(Rule_Based_Decision_bp)
+app.register_blueprint(decision_tree_customer_classification_bp)
+app.register_blueprint(decision_tree_market_segmentation_bp)
+app.register_blueprint(decision_tree_rule_based_decision_bp)
 #Random Forest
-app.register_blueprint(Customer_Behavior_bp)
-app.register_blueprint(Customer_Classification_R_bp)
-app.register_blueprint(Sales_Estimation_bp)
+app.register_blueprint(random_forest_sales_estimation_bp)
+app.register_blueprint(random_forest_customer_classification_bp)
+app.register_blueprint(random_forest_customer_behavior_bp)
 #Gradient Boosting Machines
-app.register_blueprint(Classification_bp)
-app.register_blueprint(Prediction_Improvement_bp)
-app.register_blueprint(Regression_bp)
+app.register_blueprint(gradient_boosting_classification_bp)
+app.register_blueprint(gradient_boosting_prediction_improvement_bp)
+app.register_blueprint(gradient_boosting_regression_bp)
 #Support Vector Machines
-app.register_blueprint(Svm_Classification_bp)
-app.register_blueprint(Svm_Fraud_Detection)
+app.register_blueprint(svm_classification_bp)
+app.register_blueprint(svm_fraud_detection_bp)
 #ARIMA
-app.register_blueprint(Arima_Seasonal_Analysis_bp)
-app.register_blueprint(Arima_Sales_Forecast_bp)
+app.register_blueprint(arima_seasonal_analysis_bp)
+app.register_blueprint(arima_sales_forecast_bp)
 #Prophet Facebook
-app.register_blueprint(Prophet_Forecast_bp)
+app.register_blueprint(prophet_forecast_bp)
+
+
+#STREAMING
+#LSTM/RNN
+app.register_blueprint(lstm_sales_bp)
+app.register_blueprint(gru_anomaly_bp)
+#CNN 1D
+app.register_blueprint(cnn_clickstream_bp)
+#Transformers
+app.register_blueprint(transformer_recommendation_bp)
+#Modelli Anomaly Detection
+app.register_blueprint(autoencoder_fraud_bp)
+app.register_blueprint(lstm_anomaly_bp)
+#Reinforcment learning
+app.register_blueprint(rl_recommendation_bp)
+#Online Learning
+app.register_blueprint(online_learning_bp)
+#TFX
+app.register_blueprint(forecasting_bp)
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
