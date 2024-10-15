@@ -3,6 +3,7 @@ import pandas as pd
 import tensorflow as tf
 from flask import Blueprint, jsonify, request
 
+# Definisci il Blueprint per la previsione
 forecasting_bp = Blueprint('forecasting', __name__)
 
 # Carica i dati
@@ -49,3 +50,32 @@ def forecast():
     prediction = model.predict(X[-1].reshape((1, 1, 1)))
 
     return jsonify({'forecast': prediction[0][0]})
+
+# Route per addestrare il modello
+@forecasting_bp.route('/train_model', methods=['POST'])
+def train():
+    """Addestra il modello LSTM con nuovi dati."""
+    new_data = request.json.get('sales_data')
+    if new_data is None:
+        return jsonify({'error': 'Dati di vendita non forniti'}), 400
+
+    # Converte i dati in un array numpy
+    new_data = np.array(new_data)
+    
+    # Prepara i dati per il modello
+    X, y = prepare_data(new_data, time_steps=1)
+
+    # Reshape per il modello LSTM
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+    # Crea e addestra il modello
+    model = create_model((X.shape[1], 1))
+    model.fit(X, y, epochs=10, verbose=0)
+
+    # Aggiorna il dataset globale con i nuovi dati
+    global data
+    new_df = pd.DataFrame(new_data, columns=['sales'])
+    data = pd.concat([data, new_df]).drop_duplicates().reset_index(drop=True)
+
+    return jsonify({'message': 'Modello addestrato con successo!'})
+

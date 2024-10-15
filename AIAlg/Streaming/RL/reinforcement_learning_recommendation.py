@@ -15,14 +15,18 @@ class SimpleReinforcementLearning:
         self.exploration_decay = 0.995
 
     def recommend(self):
-        # Epsilon-greedy strategy for exploration-exploitation trade-off
+        """
+        Raccomanda un prodotto utilizzando la strategia epsilon-greedy.
+        """
         if random.random() < self.exploration_rate:
             return random.randint(0, self.num_products - 1)  # Esplora
         else:
             return np.argmax(self.q_table)  # Sfrutta la conoscenza attuale
 
     def update_q_table(self, product_index, reward):
-        # Aggiorna la Q-table basata sul feedback ricevuto
+        """
+        Aggiorna la Q-table basata sul feedback ricevuto.
+        """
         self.q_table[product_index] += self.learning_rate * (reward + self.discount_factor * np.max(self.q_table) - self.q_table[product_index])
         # Riduci il tasso di esplorazione
         self.exploration_rate *= self.exploration_decay
@@ -33,12 +37,17 @@ rl_model = SimpleReinforcementLearning(num_products)
 
 @rl_recommendation_bp.route('/recommend', methods=['GET'])
 def recommend_product():
-    # Raccomanda un prodotto
+    """
+    Endpoint per raccomandare un prodotto.
+    """
     product_index = rl_model.recommend()
     return jsonify({"recommended_product": product_index})
 
 @rl_recommendation_bp.route('/feedback', methods=['POST'])
 def provide_feedback():
+    """
+    Endpoint per ricevere feedback sulle raccomandazioni.
+    """
     data = request.get_json()
     product_index = data['product_index']
     reward = data['reward']  # Ricevi un feedback in forma di ricompensa (0 o 1)

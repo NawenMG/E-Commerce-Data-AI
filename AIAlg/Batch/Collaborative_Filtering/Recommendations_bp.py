@@ -21,11 +21,53 @@ class CollaborativeFilteringModel(tf.keras.Model):
         dot_product = tf.reduce_sum(user_vector * item_vector, axis=1)
         return dot_product
 
+# Inizializza il modello (ma non addestrarlo qui)
+model = None
+
+# ============================
+# Route per ottenere raccomandazioni
+# ============================
 @recommendations_bp.route('/recommendations', methods=['POST'])
 def get_recommendations():
     """
     Route per ottenere raccomandazioni basate sul comportamento passato degli utenti.
     """
+    global model
+    data = request.json
+
+    if 'user_item_pairs' not in data:
+        return jsonify({"error": "Dati non forniti."}), 400
+    
+    user_item_pairs = np.array(data['user_item_pairs'])  # Pair di utenti e articoli
+
+    # Numero di utenti e articoli
+    num_users = np.max(user_item_pairs[:, 0]) + 1
+    num_items = np.max(user_item_pairs[:, 1]) + 1
+
+    if model is None:
+        return jsonify({"error": "Il modello non è stato addestrato."}), 400
+
+    # Previsione delle valutazioni per i prodotti non ancora valutati da un utente
+    user_id = 0  # Esempio di utente per cui ottenere raccomandazioni
+    item_ids = np.arange(num_items)  # ID di tutti gli articoli
+    pairs_to_predict = np.array([[user_id, item_id] for item_id in item_ids])
+
+    predictions = model.predict(pairs_to_predict).flatten().tolist()
+
+    # Restituisce le raccomandazioni ordinate per punteggio
+    recommended_items = sorted(zip(item_ids, predictions), key=lambda x: x[1], reverse=True)[:5]
+
+    return jsonify({"recommended_items": recommended_items})
+
+# ============================
+# Route per addestrare il modello
+# ============================
+@recommendations_bp.route('/train_model', methods=['POST'])
+def train_model():
+    """
+    Route per addestrare il modello di Collaborative Filtering con i dati forniti.
+    """
+    global model
     data = request.json
 
     if 'user_item_pairs' not in data or 'ratings' not in data:
@@ -45,14 +87,4 @@ def get_recommendations():
     model.compile(optimizer='adam', loss='mean_squared_error')
     model.fit(user_item_pairs, ratings, epochs=10, batch_size=32)
 
-    # Previsione delle valutazioni per i prodotti non ancora valutati da un utente
-    user_id = 0  # Esempio di utente per cui ottenere raccomandazioni
-    item_ids = np.arange(num_items)  # ID di tutti gli articoli
-    pairs_to_predict = np.array([[user_id, item_id] for item_id in item_ids])
-
-    predictions = model.predict(pairs_to_predict).flatten().tolist()
-
-    # Restituisce le raccomandazioni ordinate per punteggio
-    recommended_items = sorted(zip(item_ids, predictions), key=lambda x: x[1], reverse=True)[:5]
-
-    return jsonify({"recommended_items": recommended_items})
+    return jsonify({"message": "Modello di Collaborative Filtering addestrato con successo!"})

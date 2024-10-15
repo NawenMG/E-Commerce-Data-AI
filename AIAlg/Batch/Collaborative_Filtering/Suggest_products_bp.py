@@ -21,11 +21,18 @@ class CollaborativeFilteringModel(tf.keras.Model):
         dot_product = tf.reduce_sum(user_vector * item_vector, axis=1)
         return dot_product
 
+# Inizializza il modello (ma non addestrarlo qui)
+model = None
+
+# ============================
+# Route per suggerire prodotti
+# ============================
 @suggest_products_bp.route('/suggest_products', methods=['POST'])
 def suggest_products():
     """
     Route per suggerire prodotti basati su un utente specifico.
     """
+    global model
     data = request.json
 
     if 'user_id' not in data:
@@ -34,18 +41,10 @@ def suggest_products():
     user_id = data['user_id']
 
     # Supponiamo di avere accesso a una lista di articoli predefiniti
-    item_ids = np.arange(10)  # Esempio di ID di articoli disponibili
+    item_ids = np.arange(10)  # Esempio: ID di articoli disponibili
 
-    # Crea il modello (questo dovrebbe essere lo stesso modello addestrato prima)
-    num_users = 10  # Esempio: numero totale di utenti
-    num_items = 10  # Esempio: numero totale di articoli
-    model = CollaborativeFilteringModel(num_users, num_items)
-
-    # Addestramento simulato (puoi sostituirlo con un modello pre-addestrato)
-    user_item_pairs = np.array([[i, j] for i in range(num_users) for j in range(num_items)])
-    ratings = np.random.rand(num_users * num_items)  # Genera valutazioni casuali
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    model.fit(user_item_pairs, ratings, epochs=10, batch_size=32)
+    if model is None:
+        return jsonify({"error": "Il modello non è stato addestrato."}), 400
 
     # Suggerire articoli
     pairs_to_predict = np.array([[user_id, item_id] for item_id in item_ids])
@@ -55,3 +54,33 @@ def suggest_products():
     suggested_products = sorted(zip(item_ids, predictions), key=lambda x: x[1], reverse=True)[:5]
 
     return jsonify({"suggested_products": suggested_products})
+
+# ============================
+# Route per addestrare il modello
+# ============================
+@suggest_products_bp.route('/train_model', methods=['POST'])
+def train_model():
+    """
+    Route per addestrare il modello di Collaborative Filtering con i dati forniti.
+    """
+    global model
+    data = request.json
+
+    if 'user_item_pairs' not in data or 'ratings' not in data:
+        return jsonify({"error": "Dati non forniti."}), 400
+    
+    user_item_pairs = np.array(data['user_item_pairs'])  # Pair di utenti e articoli
+    ratings = np.array(data['ratings'])  # Valutazioni corrispondenti
+    
+    # Numero di utenti e articoli
+    num_users = np.max(user_item_pairs[:, 0]) + 1
+    num_items = np.max(user_item_pairs[:, 1]) + 1
+
+    # Crea il modello
+    model = CollaborativeFilteringModel(num_users, num_items)
+
+    # Addestramento del modello
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    model.fit(user_item_pairs, ratings, epochs=10, batch_size=32)
+
+    return jsonify({"message": "Modello di Collaborative Filtering addestrato con successo!"})

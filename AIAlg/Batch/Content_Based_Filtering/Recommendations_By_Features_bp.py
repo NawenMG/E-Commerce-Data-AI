@@ -27,16 +27,49 @@ products_data = pd.DataFrame({
     ]
 })
 
-# Inizializza il TF-IDF Vectorizer
+# Inizializza il TF-IDF Vectorizer e la matrice di similarità
 vectorizer = TfidfVectorizer()
+similarity_matrix = None
 
-# Calcola il TF-IDF e la matrice di similarità
 def fit_tfidf():
+    """
+    Calcola il TF-IDF e la matrice di similarità per i prodotti.
+    """
+    global similarity_matrix
     tfidf_matrix = vectorizer.fit_transform(products_data['description'])
-    return cosine_similarity(tfidf_matrix)
+    similarity_matrix = cosine_similarity(tfidf_matrix)
 
-similarity_matrix = fit_tfidf()
+# Addestra il modello inizialmente
+fit_tfidf()
 
+# ============================
+# Route per aggiornare il modello
+# ============================
+@recommendations_by_features_bp.route('/train_model', methods=['POST'])
+def train_model():
+    """
+    Route per aggiornare il modello con nuovi dati.
+    """
+    global products_data
+    
+    # Ottieni nuovi dati
+    new_data = request.json.get('products')
+
+    if not new_data:
+        return jsonify({"error": "Nessun dato fornito per l'addestramento."}), 400
+
+    # Converti in DataFrame e aggiorna il dataset dei prodotti
+    new_products_df = pd.DataFrame(new_data)
+    products_data = pd.concat([products_data, new_products_df], ignore_index=True)
+
+    # Riaddestra il modello
+    fit_tfidf()
+    
+    return jsonify({"message": "Modello aggiornato con successo."})
+
+# ============================
+# Route per ottenere raccomandazioni
+# ============================
 @recommendations_by_features_bp.route('/recommendations_by_features', methods=['POST'])
 def get_recommendations_by_features():
     """

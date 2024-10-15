@@ -11,7 +11,7 @@ transformer_recommendation_bp = Blueprint('transformer_recommendation_bp', __nam
 # ============================
 def create_transformer_model(input_shape, num_heads=4, dff=128, d_model=64, num_layers=2):
     """
-    Crea un modello Transformer per le raccomandazioni personalizzate
+    Crea un modello Transformer per le raccomandazioni personalizzate.
     """
     inputs = Input(shape=input_shape)
 
@@ -48,7 +48,7 @@ transformer_model = create_transformer_model(input_shape)
 @transformer_recommendation_bp.route('/recommend', methods=['POST'])
 def recommend():
     """
-    Prevedi raccomandazioni personalizzate basate sul comportamento degli utenti o recensioni dei prodotti
+    Prevedi raccomandazioni personalizzate basate sul comportamento degli utenti o recensioni dei prodotti.
     """
     try:
         # Riceve i dati di input (ad esempio, comportamento utente o recensioni)
@@ -69,10 +69,10 @@ def recommend():
 # ============================
 # Route per addestrare il modello Transformer
 # ============================
-@transformer_recommendation_bp.route('/train_transformer', methods=['POST'])
+@transformer_recommendation_bp.route('/train_model', methods=['POST'])
 def train_transformer():
     """
-    Addestra il modello Transformer sui dati di comportamento o recensioni
+    Addestra il modello Transformer sui dati di comportamento o recensioni.
     """
     try:
         # Riceve i dati di addestramento
